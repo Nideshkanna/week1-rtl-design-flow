@@ -117,3 +117,105 @@ Contains example Verilog designs and their corresponding testbenches.
 
 
 ---
+
+### ▶️ Running a Simulation with Icarus Verilog
+
+Here’s the standard flow to run a simulation on a Verilog design and view its output for a example design we have:
+
+### Step 1: Navigate to design directory
+
+```bash
+cd verilog_files/
+```
+![image](./images/cd.png)
+
+### Step 2: Compile the Design + Testbench
+
+```bash
+iverilog good_mux.v tb_good_mux.v
+```
+![image](./images/iverilogexe.png)
+
+This generates a default simulation executable called a.out.
+
+### Step 3: Run the Simulation
+
+```bash
+./a.out
+```
+![image](./images/aoutexe.png)
+
+This produces a VCD file (tb_good_mux.vcd) as specified in the testbench.
+
+### Step 4: Open the Waveform in GTKWave
+
+```bash
+gtkwave tb_good_mux.vcd
+```
+![image](./images/gtkout.png)
+
+GTKWave displays the signal transitions over time, letting us visualize and debug the RTL behavior.
+
+### 📂 Example: MUX Design & Testbench
+## Design File: good_mux.v
+
+```verilog
+module good_mux (input i0, input i1, input sel, output reg y);
+  always @(*)
+  begin
+    if (sel)
+      y <= i1;
+    else 
+      y <= i0;
+  end
+endmodule
+```
+![image](./images/design.png)
+
+## Testbench File: tb_good_mux.v
+
+```verilog
+`timescale 1ns/1ps
+module tb_good_mux;
+  // Inputs
+  reg i0, i1, sel;
+  // Output
+  wire y;
+
+  // Instantiate Unit Under Test (UUT)
+  good_mux uut (
+    .sel(sel),
+    .i0(i0),
+    .i1(i1),
+    .y(y)
+  );
+
+  initial begin
+    $dumpfile("tb_good_mux.vcd");  // waveform dump file
+    $dumpvars(0, tb_good_mux);     // dump all signals
+    // Initialize Inputs
+    sel = 0; i0 = 0; i1 = 0;
+    #300 $finish;                  // stop simulation
+  end
+
+  // Stimulus generators
+  always #75 sel = ~sel;
+  always #10 i0 = ~i0;
+  always #55 i1 = ~i1;
+endmodule
+```
+![image](./images/testbench.png)
+
+### ✅ Simulation Output Flow Recap
+
+- Write Design + Testbench (good_mux.v, tb_good_mux.v)
+
+- Compile with iverilog → generates a.out
+
+- Run simulation → generates tb_good_mux.vcd
+
+- View in GTKWave → waveform analysis
+
+
+### 👉 Next, we will move from simulation to synthesis using Yosys to generate a gate-level netlist.
+---
