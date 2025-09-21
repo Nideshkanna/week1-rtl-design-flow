@@ -39,7 +39,7 @@ The **testbench setup** consists of:
 - **Design** (implements required logic)  
 - **Stimulus Observer** (monitors outputs and verifies correctness)  
 
-![Testbench Working](./images/testbench-working.png)
+![Testbench Working](./images/testbenchworking.png)
 
 ---
 
