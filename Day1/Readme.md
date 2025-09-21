@@ -49,7 +49,7 @@ The Icarus Verilog-based simulation flow consists of:
 - Generates a **VCD (Value Change Dump) file**  
 - **GTKWave** reads the VCD file and produces waveform results  
 
-![Icarus Verilog Flow](./images/iverilog-flow.png)
+![Icarus Verilog Flow](./images/iverilogflow.png)
 
 ---
 
