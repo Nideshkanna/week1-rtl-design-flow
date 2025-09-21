@@ -53,4 +53,67 @@ The Icarus Verilog-based simulation flow consists of:
 
 ---
 
-✍️ *More details about labs, examples, and Yosys synthesis flow will be added in the upcoming sections.*
+## 🔧 Initial Lab Setup
+
+Before starting the labs, we need to set up the working environment and clone the required repository.  
+
+---
+
+### Step 1: Create a working directory
+```bash
+nidesh@nexus-73:~/Soc/1$ pwd
+/home/nidesh/Soc/1
+nidesh@nexus-73:~/Soc/1$ mkdir rtl_design_syn_lab
+nidesh@nexus-73:~/Soc/1$ ls
+rtl_design_syn_lab
+nidesh@nexus-73:~/Soc/1$ cd rtl_design_syn_lab/
+```
+
+### Step 2: Clone the workshop repository
+```bash
+git clone https://github.com/kunalg123/sky130RTLDesignAndSynthesisWorkshop.git
+cd sky130RTLDesignAndSynthesisWorkshop/
+```
+![image](./images/createlab.png)
+
+Now your folder structure looks like this:
+```
+sky130RTLDesignAndSynthesisWorkshop/
+├── DC_WORKSHOP
+├── my_lib
+│   ├── lib
+│   │   └── sky130_fd_sc_hd__tt_025C_1v80.lib
+│   └── verilog_model
+├── verilog_files
+├── yosys_run.sh
+└── README.md
+```
+
+### Step 3: Explore the directories
+
+📂 my_lib
+
+Contains all library files required for synthesis.
+
+    Inside lib/ → Standard cell library file:
+
+        sky130_fd_sc_hd__tt_025C_1v80.lib → Timing & power data for standard cells.
+
+    Inside verilog_model/ → All standard cell Verilog models for simulation.
+
+📂 verilog_files
+
+Contains example Verilog designs and their corresponding testbenches.
+
+    Examples include:
+
+        Good/bad cases (good_mux.v, bad_mux.v, etc.)
+
+        Sequential designs (counters, shift registers, FSMs).
+
+        Testbenches (tb_*.v) for verifying each design.
+
+✅ With this setup complete, you are ready to begin the labs using iverilog for simulation and yosys for synthesis in the next steps.
+
+
+---
