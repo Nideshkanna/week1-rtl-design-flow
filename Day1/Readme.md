@@ -221,3 +221,205 @@ GTKWave displays the signal transitions over time, letting us visualize and debu
 
 ### 👉 Next, we will move from simulation to synthesis using Yosys to generate a gate-level netlist.
 ---
+
+# 🛠️ Introduction to Yosys and Logic Synthesis
+
+In the RTL design flow, once the functionality of a Verilog design is verified through simulation, the next step is **logic synthesis**.  
+This translates the **behavioral RTL code** into a **gate-level netlist** using a standard cell library.  
+
+---
+
+## 🔄 Role of a Synthesizer
+- **Synthesizer**: A tool that converts **RTL design** into a **netlist** (collection of gates + interconnections).  
+- In this course, we use **Yosys** as the synthesizer.  
+
+![yosys](./images/yosyssetup.png)
+
+---
+
+## 📥 Inputs to the Synthesizer
+1. **Design (RTL Verilog code)** – The functionality description written in Verilog.  
+2. **Library file (.lib)** – A collection of predefined logic gates (AND, OR, NOT, etc.) with timing, power, and area characteristics.  
+
+---
+# 🧩 Part A — Writing Synthesizable RTL
+
+| Aspect | Good Practice ✅ | Avoid ❌ | Example |
+| --- | --- | --- | --- |
+| **Module & Ports** | Clear names, correct widths | Confusing names, mismatched widths | `verilog<br>module counter(input clk, rst, output [3:0] count);<br>` |
+| **Sequential Logic** | `always @(posedge clk or posedge rst)` | Asynchronous delays (`#10`) | `verilog<br>always @(posedge clk or posedge rst)<br> if(rst) count <= 0;<br> else count <= count + 1;<br>` |
+| **Combinational** | `always @(*)` | Missing sensitivity list | `verilog<br>always @(*)<br> y = a & b;<br>` |
+| **Testbench vs RTL** | Use testbench for `$display`, `#delays` | Putting them inside RTL | `verilog<br>// testbench only<br>initial begin #10 $display("count=%d", count); end<br>` |
+
+---
+
+# 🧩 Part B — What is a `.lib`?
+
+| Feature | Purpose |
+| --- | --- |
+| **Logic cells** | Defines gates like AND, OR, NOT, FFs, MUX etc. |
+| **Flavors (fast/slow)** | Variants of same gate with different speed/power trade-offs. |
+| **Characterization** | Includes delay, power, setup/hold times, etc. |
+| **Use in Synthesis** | Guides Yosys to map RTL → standard cells → Netlist. |
+
+**Example from `.lib`:**
+
+cell (AND2X1) {
+area : 1.2;
+pin(A) { direction : input; }
+pin(B) { direction : input; }
+pin(Y) { direction : output; function : "A & B"; }
+}
+
+👉 Meaning: a **2-input AND gate** with defined area, pins, and logic function.
+
+---
+
+⚡ **Key Takeaway:**
+
+- RTL = *Behavioral description* (what the circuit should do).
+- `.lib` = *Cell library* (what hardware is available to build it).
+- Yosys = *Maps RTL onto `.lib` cells → Netlist*.
+
+---
+Next let's infer about the Yosys and the command used here:
+
+**Yosys is an open-source RTL synthesis tool that converts Verilog designs into optimized gate-level netlists using standard cell libraries.**
+
+# 📖 Yosys Command Index
+
+| Command | Purpose | Notes |
+| --- | --- | --- |
+| `yosys` | Start Yosys interactive shell | Must be run first |
+| `read_liberty -lib ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib` | Load standard cell library (.lib) | `-lib` treats it as library cells, not design |
+| `read_verilog good_mux.v` | Load the Verilog RTL design | Reads your design into Yosys |
+| `synth -top good_mux` | Run synthesis | `-top` specifies the top-level module |
+| `show` | Visualize design | First `show`: before tech mapping; second `show`: after ABC mapping |
+| `abc -liberty ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib` | Map design to actual standard cells | Uses ABC optimization & cell mapping |
+| `write_verilog good_mux_netlist.v` | Export synthesized netlist (with attributes) | Includes Yosys-specific info |
+| `write_verilog -noattr good_mux_netlist.v` | Export clean netlist | Attributes removed → better readability |
+| `!vi good_mux_netlist.v` | Inspect netlist in terminal editor | Any editor can be used (`vi`, `nano`, `gedit`) |
+
+
+# ⚙️ Yosys Command Flow
+
+### 1. Invoke Yosys
+
+```bash
+yosys
+```
+
+- Check the presence of the .lib file in your system
+- Launch the Yosys interactive shell.
+  
+![image](./images/01yosys.png)
+
+### 2. Read the Standard Cell Library
+
+```tcl
+read_liberty -lib ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+```
+
+- Loads the `.lib` file (timing/power/area data of standard cells).
+- `lib` flag tells Yosys to treat it as a **cell library**, not as a design.
+
+![image](./images/02yosys.png)
+
+### 3. Read the RTL Design
+
+```tcl
+read_verilog good_mux.v
+```
+
+- Reads your Verilog design file into Yosys.
+- At this point, Yosys knows both:
+    - **Available cells** (from `.lib`)
+    - **Your design logic**
+
+![image](./images/03yosys.png)
+
+### 4. Run Synthesis
+
+```tcl
+synth -top good_mux
+```
+
+- Performs RTL-to-gate level conversion.
+- `top good_mux` tells Yosys which module is the **top design**.
+
+![image](./images/04yosys.png)
+
+### 5. Visualize (Pre-ABC)
+
+```tcl
+show
+```
+
+- Opens a **graphical view** of the synthesized design.
+- Still mapped to generic logic (NOT, AND, etc.), not actual `.lib` cells
+
+![image](./images/05yosys.png)
+
+### 6. Technology Mapping with ABC
+
+```tcl
+abc -liberty ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib`
+```
+
+- Uses **ABC (logic optimization + mapping tool)**.
+- Maps your RTL logic into **real standard cells** from the `.lib`.
+
+![image](./images/06yosys.png)
+
+By observing the ABC results we can infer the presence number of internal signals, input signals and the output signals present matching with the design code
+
+![image](./images/07yosys.png)
+
+
+### 7. Visualize (Post-ABC)
+
+```tcl 
+show
+```
+
+- Now the design is shown as **standard cells** (from `.lib`).
+
+![image](./images/08yosys.png)
+
+### 8. Write Out the Netlist
+
+```tcl
+write_verilog good_mux_netlist.v
+```
+
+![image](./images/09yosys.png)
+
+- Inspect the Netlist
+
+```tcl
+!vi good_mux_netlist.v`
+```
+
+![image](./images/10yosys.png)
+
+- Opens the netlist in `vi` editor for manual inspection.
+
+### 9. Exports the **synthesized netlist** with Yosys attributes included.
+
+```tcl
+write_verilog -noattr good_mux_netlist.v
+!vi good_mux_netlist.v`
+```
+
+![image](./images/11yosys.png)
+
+- Cleaner version → removes Yosys-specific attributes.
+
+![image](./images/12yosys.png)
+
+✅ **Flow Summary:**
+
+1. Load `.lib` → Load RTL
+2. `synth` (generic synthesis)
+3. `abc` (map to real cells)
+4. `write_verilog` (export netlist)
