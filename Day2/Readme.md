@@ -113,8 +113,7 @@ Without timing libraries, synthesis would be like designing circuits with **imag
 - `.lib` = Dictionary of standard cells with timing, power, and area data.
 - Needed for **accurate synthesis, STA, and PnR**.
 - Built using **SPICE characterization** across **PVT corners**.
-- Provides **cell flavors** to balance **performance vs. efficiency**.
-- 
+- Provides **cell flavors** to balance **performance vs. efficiency**. 
 
 # 📂 Current Setup of Liberty & Models 
 
