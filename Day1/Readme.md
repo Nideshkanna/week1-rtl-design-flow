@@ -263,14 +263,14 @@ This translates the **behavioral RTL code** into a **gate-level netlist** using 
 | **Use in Synthesis** | Guides Yosys to map RTL → standard cells → Netlist. |
 
 **Example from `.lib`:**
-
+```
 cell (AND2X1) {
 area : 1.2;
 pin(A) { direction : input; }
 pin(B) { direction : input; }
 pin(Y) { direction : output; function : "A & B"; }
 }
-
+```
 👉 Meaning: a **2-input AND gate** with defined area, pins, and logic function.
 
 ---
