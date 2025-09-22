@@ -46,7 +46,7 @@ A **`.lib` (Liberty file)** is a text-based file provided by the **foundry** or 
 - `_2` → Medium drive strength
 - `_4` → Strong, fast variant (high power, more area)
 
-![cmpimage](./images/cmpimg)
+![cmpimage](./images/cmpimg.png)
 
 ---
 
