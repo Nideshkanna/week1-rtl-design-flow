@@ -363,7 +363,7 @@ show
 ### 6. Technology Mapping with ABC
 
 ```tcl
-abc -liberty ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib`
+abc -liberty ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
 ```
 
 - Uses **ABC (logic optimization + mapping tool)**.
@@ -397,7 +397,7 @@ write_verilog good_mux_netlist.v
 - Inspect the Netlist
 
 ```tcl
-!vi good_mux_netlist.v`
+!vi good_mux_netlist.v
 ```
 
 ![image](./images/10yosys.png)
@@ -408,7 +408,7 @@ write_verilog good_mux_netlist.v
 
 ```tcl
 write_verilog -noattr good_mux_netlist.v
-!vi good_mux_netlist.v`
+!vi good_mux_netlist.v
 ```
 
 ![image](./images/11yosys.png)
@@ -423,3 +423,14 @@ write_verilog -noattr good_mux_netlist.v
 2. `synth` (generic synthesis)
 3. `abc` (map to real cells)
 4. `write_verilog` (export netlist)
+
+
+# 🎯 Day 1 – Key Takeaways
+
+- **Simulation First:** Verified RTL designs using **Icarus Verilog** and visualized waveforms in **GTKWave**.
+- **RTL Design Principles:** Learned how to write **synthesizable RTL**, proper module structure, combinational vs sequential coding, and testbench separation.
+- **Introduction to Synthesis:** Explored **Yosys** as a tool to convert RTL into a **gate-level netlist** using a `.lib` standard cell library.
+- **Understanding `.lib` Files:** Learned that `.lib` contains logic cells with **timing, power, and area data**, and multiple flavors (fast/slow) to optimize performance and avoid hold/setup issues.
+- **Command Flow Recap:** From loading `.lib` and RTL → running `synth` → mapping with `abc` → generating netlist → visualizing with `show`.
+- **Check out this ![link](https://github.com/Nideshkanna/week1-rtl-design-flow/tree/main/Day2) for Day 2**
+> ✅ Next Step: Use Yosys to synthesize your verified RTL designs into netlists, then explore timing libraries and constraints for optimized implementations.
