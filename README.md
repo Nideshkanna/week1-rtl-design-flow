@@ -19,8 +19,8 @@ In **Week-1**, we focus on the **RTL design flow** — from writing synthesizabl
 
 Each day is organized into its own folder:
 
-- [Day 1 – Simulation Basics & RTL vs Testbench](Day_1/Readme.md)  
-- [Day 2 – Introduction to Synthesis & .lib Files](Day_2/Readme.md)  
+- [Day 1 – Simulation Basics & RTL vs Testbench](Day1/Readme.md)  
+- [Day 2 – Introduction to Synthesis & .lib Files](Day2/Readme.md)  
 - [Day 3 – Optimization in Combinational & Sequential Logic](Day_3/README.md)  
 - [Day 4 – Gate-Level Simulation & Coding Styles](Day_4/README.md)  
 - [Day 5 – Constraint-Driven Synthesis & Final Wrap-Up](Day_5/README.md)  
@@ -61,7 +61,6 @@ Each **day folder** contains:
 ---
 
 📌 **Part of:** [RISC-V SoC Tapeout Program](https://github.com/Nideshkanna/riscv-soc-tapeout)  
-📌 **Maintainer:** [Nidesh Kanna R](https://github.com/yourprofile)  
+📌 **Maintainer:** [Nidesh Kanna R](https://github.com/Nideshkanna)  
 
-![Progress](https://img.shields.io/badge/Week--1-RTL%20Design%20Flow-blue?style=for-the-badge&logo=riscv)
-![Open-Source](https://img.shields.io/badge/Open--Source-Sky130-green?style=for-the-badge)
+
