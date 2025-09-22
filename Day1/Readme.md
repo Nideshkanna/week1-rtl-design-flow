@@ -122,40 +122,6 @@ Contains example Verilog designs and their corresponding testbenches.
 
 Here’s the standard flow to run a simulation on a Verilog design and view its output for a example design we have:
 
-### Step 1: Navigate to design directory
-
-```bash
-cd verilog_files/
-```
-![image](./images/cd.png)
-
-### Step 2: Compile the Design + Testbench
-
-```bash
-iverilog good_mux.v tb_good_mux.v
-```
-![image](./images/iverilogexe.png)
-
-This generates a default simulation executable called a.out.
-
-### Step 3: Run the Simulation
-
-```bash
-./a.out
-```
-![image](./images/aoutexe.png)
-
-This produces a VCD file (tb_good_mux.vcd) as specified in the testbench.
-
-### Step 4: Open the Waveform in GTKWave
-
-```bash
-gtkwave tb_good_mux.vcd
-```
-![image](./images/gtkout.png)
-
-GTKWave displays the signal transitions over time, letting us visualize and debug the RTL behavior.
-
 ### 📂 Example: MUX Design & Testbench
 ## Design File: good_mux.v
 
@@ -205,6 +171,42 @@ module tb_good_mux;
 endmodule
 ```
 ![image](./images/testbench.png)
+
+
+### Step 1: Navigate to design directory
+
+```bash
+cd verilog_files/
+```
+![image](./images/cd.png)
+
+### Step 2: Compile the Design + Testbench
+
+```bash
+iverilog good_mux.v tb_good_mux.v
+```
+![image](./images/iverilogexe.png)
+
+This generates a default simulation executable called a.out.
+
+### Step 3: Run the Simulation
+
+```bash
+./a.out
+```
+![image](./images/aoutexe.png)
+
+This produces a VCD file (tb_good_mux.vcd) as specified in the testbench.
+
+### Step 4: Open the Waveform in GTKWave
+
+```bash
+gtkwave tb_good_mux.vcd
+```
+
+![image](./images/gtkout.png)
+
+GTKWave displays the signal transitions over time, letting us visualize and debug the RTL behavior.
 
 ### ✅ Simulation Output Flow Recap
 
