@@ -340,8 +340,9 @@ module multiple_modules(a, b, c, y);
   sub_module2 u2 (.a(net1), .b(c), .y(y));
 endmodule
 ```
+# Synthesized Result:
 
-![toplevel_snippet](./images/toplevel.png)
+![topmodule_snippet](./images/topmodule.png)
 
 👉 The hierarchy is maintained → `sub_module1` and `sub_module2` exist separately.
 
@@ -352,6 +353,7 @@ module sub_module1(a, b, y);
   sky130_fd_sc_hd__and2_0 _3_ (.A(b), .B(a), .X(y));
 endmodule
 ```
+# Synthesized Result:
 
 ![submodule1](./images/sm1.png)
 
@@ -362,6 +364,7 @@ module sub_module2(a, b, y);
   sky130_fd_sc_hd__or2_0 _3_ (.A(b), .B(a), .X(y));
 endmodule
 ```
+# Synthesized Result:
 
 ![submodule2](./images/sm2.png)
 
