@@ -10,7 +10,7 @@ We explored Verilog RTL design, created testbenches, ran simulations using **Ica
 
 ## What’s New in Day 2?
 
-Today, we move closer to **real-world ASIC design flows** by diving into three critical aspects:
+Today, we move closer to **real-world SoC design flows** by diving into three critical aspects:
 
 - **Timing Libraries (`.lib`)** → What they are, how to read them, and the naming conventions used.
 - **Hierarchical vs. Flat Synthesis** → Different strategies for synthesizing complex designs.
