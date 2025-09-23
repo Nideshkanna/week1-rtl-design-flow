@@ -524,3 +524,85 @@ If `sub_module1` = AND gate:
 | **Use Case** | Good for modular designs, IP reuse, debugging | Preferred for final PnR, better performance/area |
 
 ✅ With **Hierarchical, Flat, and Submodule Synthesis**, you now see all three ways Yosys handles designs.
+
+---
+
+# Intro to Flops
+
+## 1. What is a Flop?
+
+- A **flip-flop (flop)** is a **sequential storage element**.
+- Unlike combinational circuits, whose outputs change continuously based on inputs, a flop holds a value and updates **only on a clock edge**.
+- Think of it as a **memory element** that “shields” downstream logic from glitches.
+
+---
+
+## 2. Why Do We Need Flops?
+
+Let’s start with a combinational circuit example:
+
+<p align="center">
+  y = (a · b) + c
+</p>
+
+- Inputs: `a`, `b`, and `c`.
+- `a & b → net1`, then `net1 | c → y`.
+
+### ⚡ Propagation Delay & Glitches
+
+- Every gate has a **propagation delay (tpd)**.
+- If inputs change at slightly different times, the output can momentarily glitch.
+
+![ff01](./images/ff01.png)
+
+**Case study:**
+
+1. Initially, `a=0, b=0, c=1 → y=1`.
+2. At time `t=0`: `a=1, b=1, c=0` (all switch “simultaneously”).
+3. OR gate reacts to `c=0` first (1 ns delay) → `y` goes low.
+4. AND gate takes longer (2 ns delay) → `net1` becomes 1 at `t=2ns`.
+5. That new `net1=1` still needs 1 ns through OR gate → `y` goes high again at `t=3ns`.
+6. Result: **Glitch on y** between 0–3 ns.
+
+➡️ As the depth of combinational logic grows, **glitches increase**. Outputs may **never settle cleanly**.
+
+---
+
+## 3. The Role of Flops
+
+- To solve this, we place **flops between combinational blocks**.
+- Flops **store the value** and update **only on the clock edge**.
+- This ensures stable outputs, even if inputs are glitchy.
+- In effect, **flops cut long combinational paths into smaller timing-safe stages**.
+
+![ff02](./images/ff02.png)
+
+👉 This is the basis of **pipelining** in digital design.
+
+---
+
+## 4. Initialization & Control Pins
+
+Flops need an **initial state**. Without it, downstream circuits may see **garbage values**.
+
+- That’s why flops include **control pins**:
+    - **Reset (clear)** – forces the flop to `0`.
+    - **Set (preset)** – forces the flop to `1`.
+
+These controls can be:
+
+- **Synchronous** – effective only on the **clock edge**.
+- **Asynchronous** – effective **immediately**, independent of the clock.
+
+---
+
+## 5. Summary of Key Concepts
+
+- **Glitches** arise due to unequal propagation delays in combinational circuits.
+- **Flops** store values and shield circuits from glitches.
+- **Clock edge** triggers state change.
+- **Reset/Set pins** define initial states and prevent garbage outputs.
+- **Sync/Async control** decides how reset/set behaves with respect to the clock.
+
+---
+
