@@ -255,3 +255,267 @@ endmodule
 - AND2 example shows how the same cell has **two views**:
     - `.lib`: electrical behavior (delays, leakage, area).
     - `.v`: logical/functional behavior (input/output connections).
+
+---
+
+# 🧪 **Day 2 – Lab on Hierarchical & Flat Synthesis (multiple_modules.v)**
+
+### 🎯 **Objective**
+
+To understand how **hierarchical synthesis** works in Yosys by synthesizing a multi-module design (`multiple_modules.v`) and preserving the hierarchy in the synthesized netlist.
+
+---
+
+# 🟢 Hierarchical Synthesis in Yosys
+
+### 📂 **Step 1 – Design Setup**
+
+We start with the Verilog design file:
+
+```
+module sub_module2 (input a, input b, output y);
+  assign y = a | b;
+endmodule
+
+module sub_module1 (input a, input b, output y);
+  assign y = a & b;
+endmodule
+
+module multiple_modules (input a, input b, input c, output y);
+  wire net1;
+  sub_module1 u1(.a(a), .b(b), .y(net1)); // net1 = a & b
+  sub_module2 u2(.a(net1), .b(c), .y(y)); // y = net1 | c = (a & b) | c
+endmodule
+```
+
+🔎 **Logic function:**
+
+<p align="center">
+  y = (a · b) + c
+</p>
+
+So, the top-level module (`multiple_modules`) is composed of two submodules:
+
+- `sub_module1` → AND gate
+- `sub_module2` → OR gate
+
+---
+
+### ⚙️ **Step 2 – Yosys Commands**
+
+We run synthesis with Sky130 standard cell library:
+
+```
+read_liberty -lib ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+read_verilog multiple_modules.v
+synth -top multiple_modules
+abc -liberty ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+show multiple_modules
+write_verilog multiple_modules_hier.v
+```
+
+![ophier](./images/ophier.png)
+
+- **read_liberty** → Reads the technology library (`.lib`).
+- **read_verilog** → Reads our RTL design.
+- **synth -top** → Synthesizes top module (`multiple_modules`).
+- **abc -liberty** → Maps RTL logic to **Sky130 standard cells**.
+- **show** → Displays schematic of synthesized design.
+- **write_verilog** → Writes out the synthesized gate-level netlist.
+
+---
+
+### 📜 **Step 3 – Synthesized Hierarchical Netlist**
+
+The generated file `multiple_modules_hier.v` shows:
+
+### **Top-level preserved** (`multiple_modules`):
+
+```
+module multiple_modules(a, b, c, y);
+  wire net1;
+  sub_module1 u1 (.a(a), .b(b), .y(net1));
+  sub_module2 u2 (.a(net1), .b(c), .y(y));
+endmodule
+```
+
+![toplevel_snippet](./images/toplevel.png)
+
+👉 The hierarchy is maintained → `sub_module1` and `sub_module2` exist separately.
+
+**sub_module1 mapped to cells:**
+
+```
+module sub_module1(a, b, y);
+  sky130_fd_sc_hd__and2_0 _3_ (.A(b), .B(a), .X(y));
+endmodule
+```
+
+![submodule1](./images/sm1.png)
+
+**sub_module2 mapped to cells:**
+
+```
+module sub_module2(a, b, y);
+  sky130_fd_sc_hd__or2_0 _3_ (.A(b), .B(a), .X(y));
+endmodule
+```
+
+![submodule2](./images/sm2.png)
+
+So,
+
+- `sub_module1` → implemented using `sky130_fd_sc_hd__and2_0` (2-input AND gate).
+- `sub_module2` → implemented using `sky130_fd_sc_hd__or2_0` (2-input OR gate).
+
+---
+
+### 📝 **Analysis**
+
+- The **hierarchy is preserved** (submodules are still present in netlist).
+- Each submodule is individually mapped to **standard cells** from Sky130 library.
+- This makes **debugging easy** since `multiple_modules` → `sub_module1` + `sub_module2` are still visible.
+- If we had **flattened synthesis**, the tool would directly map the entire `(a&b)|c` logic into one flat netlist (losing submodules).
+
+---
+
+### ✅ **Conclusion**
+
+- We successfully performed **hierarchical synthesis** in Yosys.
+- The **Sky130 standard cells** were used for logic mapping.
+- The preserved hierarchy shows how **RTL modules translate** into gate-level submodules, each made up of real technology cells.
+
+---
+
+⚡ Next step: we can do the **Flat synthesis lab** using the same design (`flatten` in Yosys) and compare both styles.
+
+---
+# 🟢 Flat Synthesis in Yosys
+
+## 🔹 What We Did
+
+Unlike **hierarchical synthesis** (which preserves submodules), in **flat synthesis** we collapse the entire design into a **single module**.
+
+This means all logic from submodules is absorbed into the top module during synthesis, eliminating hierarchy.
+
+---
+
+## 🔹 Commands Used
+
+| Command | Purpose |
+| --- | --- |
+| `read_liberty -lib ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib` | Load timing/power models of standard cells |
+| `read_verilog multiple_modules.v` | Load the RTL design with hierarchy |
+| `synth -top multiple_modules` | Run synthesis with `multiple_modules` as the top |
+| `abc -liberty ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib` | Technology mapping (map RTL → std cells) |
+| `flatten` | **Flattens hierarchy**: submodules merged into one netlist |
+| `show` | Visualize schematic after flattening |
+| `write_verilog -noattr multiple_modules_flat.v` | Write final flat netlist (clean) |
+
+![flatten](./images/flatten.png)
+
+### Visualization:
+
+![opflat](./images/opflat.png)
+
+
+## 🔹 Output Observed
+
+Generated **flat netlist** → `multiple_modules_flat.v`
+
+![flatnetlist](./images/flatnetlist.png)
+
+### Key Observations:
+
+- Only **one module** exists: `multiple_modules`
+- Submodules (`sub_module1`, `sub_module2`) no longer exist — their logic is inlined.
+- Standard cells (`sky130_fd_sc_hd__and2_0`, `sky130_fd_sc_hd__or2_0`) appear **directly in the top module**.
+- Internal nets and signals are renamed (like `\u1.*2*`, `\u2.*3*`) to preserve uniqueness.
+
+---
+
+## 🔹 Visual Difference
+
+**Hierarchical Netlist**
+
+```
+multiple_modules
+ ├── sub_module1 → mapped to AND gate
+ └── sub_module2 → mapped to OR gate
+```
+
+**Flat Netlist**
+
+```
+multiple_modules
+ ├── AND gate (directly inside top)
+ └── OR gate (directly inside top)
+```
+
+---
+
+## 🔹 Why Flat Synthesis?
+
+- Easier for **place-and-route tools** (no module boundaries).
+- Optimizations can cross module boundaries (better timing/area).
+- But: readability is reduced, debugging is harder.
+
+---
+
+✅ With this, you now have **both hierarchical and flat netlists** for the same RTL design, showing the trade-offs.
+
+---
+
+# 🟢 Submodule Synthesis in Yosys
+
+## 🔹 What We Did
+
+Instead of synthesizing the **top module (`multiple_modules`)**, we directly synthesized a **submodule (`sub_module1`)**.
+
+### Commands
+
+```
+read_liberty -lib ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib 
+read_verilog multiple_modules.v 
+synth -top sub_module1
+abc -liberty ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib 
+show
+```
+
+![opsub](./images/opsub.png)
+
+---
+
+## 🔹 Why Submodule Synthesis?
+
+1. **Multiple Instances Optimization**
+    - If a submodule is instantiated many times, synthesizing it once helps us reuse its optimized netlist everywhere.
+    - Saves synthesis time and ensures **consistent logic** across all instances.
+2. **Divide-and-Conquer Approach**
+    - Large SoCs are too big to synthesize in one shot.
+    - We break the design into smaller blocks (submodules), synthesize independently, then integrate at higher levels.
+    - Improves **scalability, modularity, and debug**.
+
+---
+
+## 🔹 Example
+
+If `sub_module1` = AND gate:
+
+- Synthesizing it alone shows how Yosys maps it directly to `sky130_fd_sc_hd__and2_*` standard cell.
+- Then, in higher-level designs, this optimized submodule can be reused multiple times.
+
+---
+
+# 📊 Summary Table – Hierarchical vs Flat Synthesis
+
+| Aspect | Hierarchical Synthesis | Flat Synthesis |
+| --- | --- | --- |
+| **Structure** | Preserves submodules | Merges all logic into a single module |
+| **Readability** | Easy to trace RTL hierarchy | Harder to debug (all logic mixed) |
+| **Reuse** | Submodules can be reused (efficient for multiple instances) | No reuse — each instance fully expanded |
+| **Optimization** | Limited across module boundaries | Global optimization across the whole design |
+| **Synthesis Time** | Faster for incremental or block-level synthesis | Slower for large designs |
+| **Use Case** | Good for modular designs, IP reuse, debugging | Preferred for final PnR, better performance/area |
+
+✅ With **Hierarchical, Flat, and Submodule Synthesis**, you now see all three ways Yosys handles designs.
