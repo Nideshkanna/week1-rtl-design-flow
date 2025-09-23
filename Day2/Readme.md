@@ -314,7 +314,7 @@ show multiple_modules
 write_verilog multiple_modules_hier.v
 ```
 
-![ophier](./images/ophier.png)
+![hiercmd](./images/hiercmd.png)
 
 - **read_liberty** → Reads the technology library (`.lib`).
 - **read_verilog** → Reads our RTL design.
@@ -322,6 +322,8 @@ write_verilog multiple_modules_hier.v
 - **abc -liberty** → Maps RTL logic to **Sky130 standard cells**.
 - **show** → Displays schematic of synthesized design.
 - **write_verilog** → Writes out the synthesized gate-level netlist.
+
+![ophier](./images/ophier.png)
 
 ---
 
