@@ -605,4 +605,4 @@ These controls can be:
 - **Sync/Async control** decides how reset/set behaves with respect to the clock.
 
 ---
-
+Let's continue to learn the types of Flops available and it's designing techniques in a new page 👉 [FLOP](FLOP.md)
