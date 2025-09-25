@@ -135,7 +135,7 @@ Optimization techniques can be grouped into **basic** and **advanced** methods.
     - A2 drives C
 - Reduces long interconnect delay at the cost of one extra flop.
 
-![05](./images/05.png)
+![05](./images/005.png)
 
 ---
 
@@ -148,7 +148,7 @@ Optimization techniques can be grouped into **basic** and **advanced** methods.
 - Retiming moves some logic so both paths balance to ~3.5 ns each.
 - New maximum frequency improves to **250 MHz**.
 
-![06](./images/06.png)
+![06](./images/006.png)
 
 ✅ Improves performance without changing functionality.
 
