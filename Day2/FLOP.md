@@ -259,9 +259,9 @@ show
 
 3. **Sync Reset Flop**
     - RTL is equivalent to:q=sync_reset⋅d
-        
-        q=sync_reset‾⋅dq = \overline{sync\_reset} \cdot d
-        
+      <p allign = "center"
+        q = ~(sync_reset)⋅dq
+		  </p>
     - Yosys maps it as:
         - A **plain DFF (no reset pin)**.
         - An **AND gate** before `D`, one input inverted `sync_reset`, another `d`.
