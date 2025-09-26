@@ -170,6 +170,8 @@ Optimization techniques can be grouped into **basic** and **advanced** methods.
 
 In this lab, we will practically verify **logic optimization techniques** using simple Verilog examples.
 
+![07](./images/07.png)
+
 We will run **Yosys synthesis** with the **Sky130 standard cell library** and observe how redundant logic is simplified.
 
 ---
@@ -184,13 +186,16 @@ module opt_check (input a , input b , output y);
 endmodule
 ```
 
-- This is equivalent to a **2x1 Mux** where:y=a?b:0=(aˉ⋅0)+(a⋅b)=a⋅b
+![08](./images/08.png)
+
+- This is equivalent to a **2x1 Mux** where:
     
-    y=a?b:0=(aˉ⋅0)+(a⋅b)=a⋅by = a ? b : 0 = (\bar{a} \cdot 0) + (a \cdot b) = a \cdot b
-    
+    **y=a?b:0 ==> (!a⋅0)+(a⋅b) ==> a⋅b**
+      
 - So, the expected optimized circuit is a **2-input AND gate**.
 
-📷 *Insert screenshot of Yosys schematic here*
+
+![09](./images/09.png)
 
 ---
 
@@ -204,15 +209,17 @@ module opt_check2 (input a , input b , output y);
 endmodule
 ```
 
-- Expression:y=(aˉ⋅b)+(a⋅1)=a+b
+![10](./images/10.png)
+
+- Expression:
     
-    y=(aˉ⋅b)+(a⋅1)=a+by = (\bar{a} \cdot b) + (a \cdot 1) = a + b
+    **y = (!a⋅b)+(a⋅1) ==> a+b**
     
 - Optimized result is a **2-input OR gate**.
 
 👉 This process of simplifying Boolean expressions is known as **Boolean Algebra Optimization** (or **Algebraic Simplification**).
 
-📷 *Insert screenshot of Yosys schematic here*
+![11](./images/11.png)
 
 ---
 
@@ -226,13 +233,15 @@ module opt_check3 (input a , input b, input c , output y);
 endmodule
 ```
 
-- Expansion:y=aˉ⋅0+a(cˉ⋅0+c⋅b)=a⋅b⋅c
+![12](./images/12.png)
+
+- Expansion:
     
-    y=aˉ⋅0+a(cˉ⋅0+c⋅b)=a⋅b⋅cy = \bar{a}\cdot 0 + a(\bar{c}\cdot 0 + c \cdot b) = a \cdot b \cdot c
+    **y = (!a⋅0)+a(!c⋅0+c⋅b) = a⋅b⋅c**
     
 - Expected optimized result is a **3-input AND gate**.
 
-📷 *Insert screenshot of Yosys schematic here*
+![13](./images/13.png)
 
 ---
 
@@ -246,12 +255,12 @@ module opt_check4 (input a , input b , input c , output y);
 endmodule
 ```
 
-- After simplification, this reduces to:y=a⊙c(XNOR operation between a and c)
+- After simplification, this reduces to:
     
-    y=a⊙c(XNOR operation between a and c)y = a \odot c \quad \text{(XNOR operation between a and c)}
+    **y = a⊙c (XNOR operation between a and c)**
     
 
-📷 *Insert screenshot of Yosys schematic here*
+![14](./images/14.png)
 
 ---
 
@@ -278,6 +287,7 @@ sub_module2 U3 (.a(b), .b(d) , .y(n3));
 assign y = c | (b & n1); 
 endmodule
 ```
+![15](./images/15.png)
 
 ### Observations:
 
@@ -303,9 +313,7 @@ show
 - **`opt_clean -purge`** → Removes unused cells, wires, and redundant logic.
 - **`abc`** → Performs **technology mapping** and further Boolean optimization using the given `.lib`.
 
-📷 *Insert schematic before flatten (hierarchical view)*
-
-📷 *Insert schematic after flatten + opt_clean (optimized flat view)*
+![16](./images/16.png)
 
 ## ✅ Summary of Lab
 
@@ -330,6 +338,8 @@ $ ls *dff_const*
 dff_const1.v  dff_const3.v  dff_const5.v     tb_dff_const2.v  tb_dff_const4.v
 dff_const2.v  dff_const4.v  tb_dff_const1.v  tb_dff_const3.v  tb_dff_const5.v
 ```
+
+![17](./images/17.png)
 
 ## **Example 1 – Constant D Flip-Flop**
 
@@ -362,7 +372,7 @@ iverilog dff_const1.v tb_dff_const1.v
 gtkwave tb_dff_const1.vcd
 ```
 
-📌 *Insert GTKWave timing diagram here.*
+![18](./images/18.png)
 
 **GTKWave (Simulation):**
 
@@ -381,7 +391,7 @@ abc -liberty ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
 show
 ```
 
-📌 *Insert Yosys schematic here.*
+![19](./images/19.png)
 
 - Shows a single **DFF cell** with reset pin.
 - Confirms that synthesis **retains the flop**.
@@ -416,16 +426,17 @@ iverilog dff_const2.v tb_dff_const2.v
 gtkwave tb_dff_const2.vcd
 ```
 
-📌 *Insert GTKWave timing diagram.*
-
 **GTKWave:**
+
+![20](./images/20.png)
+
 
 - Regardless of clk or reset, `q=1` permanently.
 - Simulation confirms no toggling.
 
-📌 *Insert Yosys schematic.*
-
 **Yosys Schematic:**
+
+![21](./images/21.png)
 
 - Simplified to a **constant driver (1’b1)**.
 - **No flop cell** in the netlist.
@@ -464,9 +475,9 @@ endmodule
 - `q` samples `q1` with **one cycle latency**.
 - Result: `q` ≠ constant → **cannot be optimized away**.
 
-📌 *Insert GTKWave output showing one-cycle delay.*
-
 **GTKWave:**
+
+![22](./images/22.png)
 
 - Reset: `q=1`, `q1=0`.
 - On first clk edge after reset: `q1→1`, `q→0`.
@@ -474,6 +485,8 @@ endmodule
 - Shows **one cycle delay** between `q1` and `q`.
 
 **Yosys Schematic:**
+
+![23](./images/23.png)
 
 - One flop mapped as **reset flop**.
 - Second flop mapped as **set flop**.
@@ -511,9 +524,10 @@ endmodule
 - Both `q` and `q1` tied to constant `1`.
 - During synthesis: **no flops inferred**.
 
-📌 *Insert schematic showing only constant 1 connection. gtk*
 
 **GTKWave:**
+
+![24](./images/24.png)
 
 - `q` and `q1` always 1 after reset.
 - Behaves like constants.
@@ -525,7 +539,7 @@ endmodule
    Number of cells: 0
 ```
 
-📌 *Insert schematic showing only constant 1 connection.*
+![25](./images/25.png)
 
 **Yosys Schematic:**
 
@@ -565,9 +579,9 @@ endmodule
 - Effectively a **2-stage DFF chain** with initial reset.
 - **Cannot optimize** due to dependency.
 
-📌 *Insert schematic showing two flip-flops GTK*
-
 **GTKWave:**
+
+![26](./images/26.png)
 
 - Reset: `q=0`, `q1=0`.
 - Next clk: `q1=1`, `q=0`.
@@ -582,9 +596,9 @@ endmodule
    $_DFF_PP0_  2
 ```
 
-📌 *Insert schematic showing two flip-flops mapped to `sky130_fd_sc_hd__dfrtp_1` cells.*
-
 **Yosys Schematic:**
+
+![27](./images/27.png)
 
 - Two flops mapped (`sky130_fd_sc_hd__dfrtp_1`).
 - Matches the sequential behavior in GTKWave.
@@ -669,8 +683,9 @@ synth -top counter_opt
 dfflibmap -liberty ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
 abc -liberty ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
 show
-
 ```
+
+![28](./images/28.png)
 
 **Observation:**
 
@@ -678,7 +693,8 @@ show
 - `count[1]` and `count[2]` are removed.
 - An **inverter** connected to `count[0]` forms a **toggle DFF**, acting as a 1-bit counter.
 
-📌 *Insert Yosys schematic screenshot here showing only 1 DFF + inverter.*
+![29](./images/29.png)
+
 
 **Special Yosys Commands Used:**
 
@@ -722,8 +738,9 @@ synth -top counter_opt
 dfflibmap -liberty ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
 abc -liberty ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
 show
-
 ```
+
+![30](./images/30.png)
 
 **Observation:**
 
@@ -737,7 +754,7 @@ show
     
 - All bits contribute to the logic; no bits are optimized away.
 
-📌 *Insert Yosys schematic screenshot here showing 3 DFFs + NOR gate.*
+![31](./images/31.png)
 
 ---
 
