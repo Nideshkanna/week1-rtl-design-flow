@@ -111,3 +111,173 @@ Here, the “incomplete if” is **intentional** because the register must hold 
 - **Sequential blocks → Holding previous value is fine**
 
 ---
+
+# **Day 5 – Optimization in Synthesis (Lab on If statements)**
+
+## **Lab Files Used**
+
+From the lab folder:
+
+```
+incomp_case.v   incomp_if.v       tb_incomp_if2.v
+incomp_if2.v    tb_incomp_case.v  tb_incomp_if.v
+
+```
+
+We’ll first explore **incomplete if statements** and see how they lead to **latches**.
+
+---
+
+## **Example 1: `incomp_if.v`**
+
+### **Code**
+
+```verilog
+module incomp_if (input i0 , input i1 , input i2 , output reg y);
+always @ (*)
+begin
+   if(i0)
+      y <= i1;
+end
+endmodule
+
+```
+
+### **Explanation**
+
+- If `i0=1`, then `y = i1`
+- If `i0=0`, **no assignment → latch behavior**
+- This is equivalent to a **D latch**:
+    - `i0` = Enable
+    - `i1` = D input
+    - `y` = Q output
+
+📌 **Image Needed Here** → "D latch circuit showing `i0` as enable and `i1` as D input"
+
+---
+
+### **Simulation**
+
+```bash
+iverilog incomp_if.v tb_incomp_if.v
+./a.out
+gtkwave tb_incomp_if.vcd
+
+```
+
+👉 **Observation**:
+
+When `i0=0`, output `y` **retains the previous value** instead of going to 0.
+
+📌 **GTKWave Screenshot Needed** → Show `y` holding value when `i0=0`.
+
+---
+
+### **Synthesis**
+
+```bash
+read_liberty -lib ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+read_verilog incomp_if.v
+synth -top incomp_if
+abc -liberty ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+show
+
+```
+
+📌 **Synthesis Result**:
+
+```
+Number of cells: 1
+   $_DLATCH_P_   1
+
+```
+
+⚠️ We expected a **MUX**, but synthesis inferred a **Latch**.
+
+This confirms the **danger of incomplete if**.
+
+---
+
+## **Example 2: `incomp_if2.v`**
+
+### **Code**
+
+```verilog
+module incomp_if2 (input i0 , input i1 , input i2 , input i3, output reg y);
+always @ (*)
+begin
+   if(i0)
+      y <= i1;
+   else if (i2)
+      y <= i3;
+end
+endmodule
+
+```
+
+### **Explanation**
+
+- If `i0=1` → `y = i1`
+- Else if `i2=1` → `y = i3`
+- Else → **no assignment → inferred latch**
+
+📌 **Image Needed Here** → "Mux + latch structure, with latch enabled when both `i0` and `i2` are low".
+
+---
+
+### **Simulation**
+
+```bash
+iverilog incomp_if2.v tb_incomp_if2.v
+./a.out
+gtkwave tb_incomp_if2.vcd
+
+```
+
+👉 **Observation**:
+
+When both `i0=0` and `i2=0`, output `y` **remains latched**.
+
+📌 **GTKWave Screenshot Needed** → Show `y` unchanged when both inputs low.
+
+---
+
+### **Synthesis**
+
+```bash
+read_liberty -lib ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+read_verilog incomp_if2.v
+synth -top incomp_if2
+abc -liberty ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+show
+
+```
+
+📌 **Synthesis Result**:
+
+```
+Number of cells: 3
+   $_DLATCH_N_   1
+   $_MUX_        1
+   $_NOR_        1
+
+```
+
+This matches our expectation:
+
+- MUX for selecting `i1` or `i3`
+- NOR + latch for the case when no condition is satisfied
+
+---
+
+## **Key Takeaway**
+
+- **Incomplete If = Inferred Latch**
+- Always ensure that **all conditions are covered** in combinational logic
+- Use `else` to provide a **default assignment** and avoid latches
+
+---
+
+👉 Next, we will extend this lab to **Case statements** and study similar pitfalls (incomplete case, partial assignment, overlapping case).
+
+---
