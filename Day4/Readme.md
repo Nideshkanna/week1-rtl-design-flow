@@ -292,8 +292,7 @@ Because **coding mistakes** in RTL may pass RTL simulation but **fail in GLS**. 
     - Gate-level standard cell models (`sky130_fd_sc_hd.v`, `primitives.v`)
     - Same testbench
 
-📸 **Image to add here:** Flow diagram of RTL → Netlist → GLS simulation.
-
+![gls](./images/01.png)
 ---
 
 # **🧑‍💻 Lab 1 – GLS with a Ternary Operator**
@@ -320,7 +319,7 @@ gtkwave tb_ternary_operator_mux.vcd
 
 ```
 
-📸 **Image to add here:** GTKWave waveform of RTL simulation.
+![02](./images/02.png)
 
 ---
 
@@ -337,6 +336,8 @@ show
 
 ```
 
+![03](./images/03.png)
+
 Yosys log shows RTL mux → **sky130_fd_sc_hd__mux2_1**.
 
 ---
@@ -351,7 +352,7 @@ gtkwave tb_ternary_operator_mux.vcd
 
 ```
 
-📸 **Image to add here:** GTKWave GLS waveform.
+![04](./images/04.png)
 
 ---
 
@@ -388,9 +389,12 @@ gtkwave tb_bad_mux.vcd
 
 ```
 
-📸 **Image to add here:** RTL sim waveform (shows wrong behavior).
+![05](./images/05.png)
 
 ---
+**Synthesis Result** 
+
+![06](./images/06.png)
 
 ### ✅ GLS Simulation
 
@@ -402,9 +406,11 @@ gtkwave tb_bad_mux.vcd
 
 ```
 
-📸 **Image to add here:** GLS sim waveform (shows correct mux behavior).
+![07](./images/07.png)
+
 
 👉 **This is a Simulation–Synthesis Mismatch** caused by **missing sensitivity list**.
+
 
 ---
 
@@ -439,7 +445,12 @@ gtkwave tb_blocking_caveat.vcd
 
 ```
 
-📸 **Image to add here:** RTL sim waveform (shows wrong output when `x` lags).
+![08](./images/08.png)
+
+---
+**Yosys Sythesis**
+
+![09](./images/09.png)
 
 ---
 
@@ -453,7 +464,7 @@ gtkwave tb_blocking_caveat.vcd
 
 ```
 
-📸 **Image to add here:** GLS sim waveform (shows correct logic).
+![10](./images/10.png)
 
 👉 Mismatch caused by **Blocking Assignment**. Use **Non-Blocking (`<=`)** instead.
 
@@ -469,7 +480,6 @@ gtkwave tb_blocking_caveat.vcd
     - Non-standard coding practices
 - ✅ Always **use good RTL coding style** to avoid issues
 
-📸 **Image to add here:** Summary diagram of mismatch causes.
 
 ---
 
