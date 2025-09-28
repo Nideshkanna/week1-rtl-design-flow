@@ -492,6 +492,6 @@ Now that we’ve seen how GLS uncovers mismatches, the next step is **RTL coding
 - **Overlapping cases**
 - **For loop vs For generate**
 
-👉 Let’s begin **Day 5 with Synthesis Optimizations** 🚀
+👉 Let’s begin **![Day 5](https://github.com/Nideshkanna/week1-rtl-design-flow/blob/main/Day5/Readme.md) with Synthesis Optimizations** 🚀
 
 ---
