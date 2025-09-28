@@ -872,9 +872,7 @@ We’ll begin exploring:
 * **Functional Modelling of SoC Components**.
 * How **RTL blocks map into a complete SoC**.
 
-👉 ![Week2]() is where we **connect RTL to the bigger SoC picture**. 🖥️⚡
+👉 ![Week2](https://github.com/Nideshkanna/week2-research-babysoc) is where we **connect RTL to the bigger SoC picture**. 🖥️⚡
 
 ---
-
-Do you want me to also create a **Week 1 → Week 2 transition banner style (like the day transitions)** with emojis and headings?
 
