@@ -445,7 +445,7 @@ endmodule
 
 ### Behaviour / Explanation
 
-![comcase](./images/12.png)
+![comcase](./images/13.png)
 
 * All selector values covered (via `default`) → combinational MUX, **no latch**.
 
@@ -456,7 +456,7 @@ iverilog comp_case.v tb_comp_case.v
 ./a.out
 gtkwave tb_comp_case.vcd
 ```
-![wave](./images/13.png)
+![wave](./images/14.png)
 
 As expected we have switching behavior (no hold/latched values).
 
@@ -470,7 +470,7 @@ abc -liberty ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
 show
 ```
 
-![synth](./images/14.png)
+![synth](./images/15.png)
 
 **Synthesis summary (from your run):**
 
@@ -510,7 +510,7 @@ endmodule
 
 ### Behaviour / Explanation
 
-![partcase](./images/15.png)
+![partcase](./images/16.png)
 
 * **`y`** is assigned in every branch → `y` is combinational.
 * **`x`** is *not* assigned in the `2'b01` branch → synthesizer infers a **latch** for `x` to hold its previous value when `sel == 2'b01`.
@@ -523,7 +523,7 @@ iverilog partial_case_assign.v tb_partial_case_assign.v
 gtkwave tb_partial_case_assign.vcd
 ```
 
-![wave](./images/16.png)
+![wave](./images/17.png)
 
 `x` holds value for the problematic `sel` branch.
 
@@ -537,7 +537,7 @@ abc -liberty ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
 show
 ```
 
-![synth](./images/17.png)
+![synth](./images/18.png)
 
 **Synthesis summary:**
 
@@ -584,14 +584,14 @@ endmodule
 
 ### Behaviour / Explanation
 
-![overcase](./images/18.png)
+![overcase](./images/19.png)
 
 * The `2'b1?` (wildcard) overlaps with `2'b10` and `2'b11`. Overlapping patterns can lead to **ambiguous matching order** in simulation depending on how Verilog interprets the wildcard and order of matches — this can produce **unpredictable behavior** in RTL simulation.
 * In your run, the RTL simulation showed confusing/latched behavior for `sel == 2'b11`, while Yosys synthesized a clean 4:1 mux (no latch).
 
 ### Synthesis & Netlist
 
-![synth](./images/19.png)
+![synth](./images/20.png)
 
 * Yosys mapped the logic to a `mux4` cell (see `bad_case_net.v` snippet you produced). No latch was inferred because, during synthesis, Yosys resolved branches into a deterministic mux implementation.
 
@@ -603,7 +603,7 @@ iverilog ../my_lib/verilog_model/primitives.v ../my_lib/verilog_model/sky130_fd_
 gtkwave tb_bad_case.vcd
 ```
 
-![gls](./images/20.png)
+![gls](./images/21.png)
 
 Clean mux selection in GLS.
 
