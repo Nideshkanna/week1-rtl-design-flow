@@ -1,66 +1,140 @@
-# 🖥️ Week 1 — RTL Design Flow (RISC-V SoC Tapeout Program)
 
-This repository is part of the **VSD RISC-V SoC Tapeout Program**.  
-In **Week-1**, we focus on the **RTL design flow** — from writing synthesizable Verilog to simulating with open-source tools and synthesizing using **Yosys** with the **Sky130 PDK**.
+# 🖥️ Week 1 — RTL Design & Optimizations (RISC-V SoC Tapeout Program)
+
+This repository is part of the **VSD RISC-V SoC Tapeout Program**.
+In **Week-1**, we focused on the **RTL design flow** — from writing synthesizable Verilog, simulating with open-source tools, synthesizing with **Yosys**, and learning **logic optimizations** to improve area, power, and performance.
 
 ---
 
 ## 🎯 Learning Goals
 
-- Understand **RTL coding styles** and testbench basics  
-- Run **simulation** using Icarus Verilog + GTKWave  
-- Perform **logic synthesis** with Yosys  
-- Explore the role of **timing libraries (.lib)** in mapping RTL to gates  
-- Generate **netlists** and prepare designs for later flow stages  
+* Understand **RTL coding styles** (combinational & sequential) and testbench basics.
+* Run **RTL simulation** using Icarus Verilog + GTKWave.
+* Perform **logic synthesis** with Yosys using **Sky130 PDK**.
+* Explore **.lib standard cell libraries** (timing, power, logic).
+* Generate **netlists** and perform **Gate-Level Simulation (GLS)**.
+* Learn **combinational & sequential logic optimizations** for efficient RTL.
+* Identify and resolve **synthesis vs simulation mismatches**.
+* Apply **constraint-driven synthesis** for timing closure.
 
 ---
 
 ## 📂 Repository Structure
 
-Each day is organized into its own folder:
+Each day of Week-1 is organized into a separate folder:
 
-- [Day 1 – Introduction to Verilog RTL design and Synthesis](Day1/Readme.md)  
-- [Day 2 – .lib Files, Hierarchical vs Flat Synthesis and Flop coding styles](Day2/Readme.md)  
-- [Day 3 – Optimization in Combinational & Sequential Logic](Day_3/README.md)  
-- [Day 4 – Gate-Level Simulation & Coding Styles](Day_4/README.md)  
-- [Day 5 – Constraint-Driven Synthesis & Final Wrap-Up](Day_5/README.md)  
+* [Day 1 – RTL Basics & Verilog Simulation](Day1/Readme.md)
+* [Day 2 – Structural Optimizations & .lib Files](Day2/Readme.md)
+* [Day 3 – Combinational & Sequential Optimizations](Day3/Readme.md)
+* [Day 4 – Gate-Level Simulation & Simulation-Synthesis Mismatch](Day4/Readme.md)
+* [Day 5 – Constraint-Driven Synthesis & Wrap-Up](Day5/Readme.md)
 
 Each **day folder** contains:
-- `README.md` → Concepts + lab steps  
-- `images/` → Diagrams, screenshots  
-- `src/` → Verilog codes, scripts  
+
+* `README.md` → Concepts + detailed notes + examples
+* `images/` → Diagrams, waveforms, logic structures
 
 ---
 
 ## ⚙️ Tools Used
 
-- **Icarus Verilog (iverilog)** → RTL simulation  
-- **GTKWave** → Waveform viewer  
-- **Yosys** → Logic synthesis  
-- **Sky130 PDK** → Open-source standard cell library  
+* **Icarus Verilog (iverilog)** → RTL & GLS simulation
+* **GTKWave** → Waveform viewer
+* **Yosys** → Logic synthesis & netlist generation
+* **Sky130 PDK** → Open-source standard cell library
 
 ---
 
-# 🎯 Day 1 – Key Learnings
+## 📘 Weekly Highlights
 
-- Understood the **basics of Verilog RTL design flow**.
-- Explored **Icarus Verilog** for simulation and **GTKWave** for waveform visualization.
-- Learned the role of **design files** and **testbenches** in verification.
-- Got introduced to **Yosys** for synthesis and how it maps RTL into a **gate-level netlist**.
-- Understood the importance of the **.lib standard cell library** (timing, power, and logic definitions).
+### ✅ Day 1 – RTL Basics
 
-✅ A solid foundation built on **simulation + synthesis basics** to move forward in RTL-to-GDSII flow.
----
-
-
-## 🙌 Acknowledgements  
-
-- [Kunal Ghosh](https://github.com/kunalg123) – VSD SoC Program  
-- Open-source contributors of **Yosys**, **GTKWave**, and **Sky130 PDK**  
+* Learned **Verilog RTL fundamentals**.
+* Explored **testbench structure** and simulation flow.
+* Simulated using **Icarus Verilog + GTKWave**.
+* Got introduced to **Yosys** synthesis and **.lib role**.
 
 ---
 
-📌 **Part of:** [RISC-V SoC Tapeout Program](https://github.com/Nideshkanna/riscv-soc-tapeout)  
-📌 **Maintainer:** [Nidesh Kanna R](https://github.com/Nideshkanna)  
+### ✅ Day 2 – Structural Optimizations
 
+* Studied **adder/multiplier optimizations**.
+* Understood **hierarchical vs flat synthesis**.
+* Explored **flop coding styles** and their synthesis impact.
+* Learned trade-offs between **area, power, and speed**.
 
+---
+
+### ✅ Day 3 – Combinational & Sequential Optimizations
+
+* **Combinational logic:** Boolean simplification, constant propagation, redundant logic removal.
+* **Sequential logic:** Register balancing, retiming, redundant flop removal.
+* Example: Simplified **MUX-based expressions** → XNOR equivalent.
+* Focused on **area & power savings** through RTL optimizations.
+
+---
+
+### ✅ Day 4 – GLS & Simulation-Synthesis Mismatch
+
+* **GLS (Gate-Level Simulation):** Running testbenches with netlist as DUT.
+* Compared **RTL Simulation vs GLS** (waveform correctness & timing validation).
+* Learned about **delay-annotated gate models** for timing verification.
+* Studied **Synthesis-Simulation mismatches** and causes:
+
+  * Missing sensitivity lists
+  * Blocking vs Non-Blocking assignments
+  * Non-standard Verilog coding
+
+---
+
+### ✅ Day 5 – Constraint-Driven Synthesis & Wrap-Up
+
+* Introduced to **timing constraints (SDC)**.
+* Learned **setup/hold concepts** and how synthesis tools optimize accordingly.
+* Understood **multi-cycle paths, false paths, and clock definitions**.
+* Ran **constraint-driven synthesis in Yosys**.
+* 📌 **Wrap-Up:** Connected all concepts → from RTL → synthesis → optimization → GLS → constraints.
+
+---
+
+## 📝 Week 1 Summary
+
+Over this week, we built a strong foundation in:
+
+* Writing **clean RTL code**.
+* Running **simulation & synthesis with open-source tools**.
+* Applying **logic optimizations** for efficiency.
+* Verifying designs at both **RTL and gate level**.
+* Understanding and applying **timing constraints**.
+* Identifying and avoiding **simulation-synthesis mismatches**.
+
+📌 **Key Takeaway:** Week-1 bridged the gap between **RTL coding → synthesis → gate-level verification → constraints**, preparing us for the **SoC-level design journey** ahead. 🚀
+
+---
+
+# 🔜 Moving to Week 2: BabySoC Fundamentals & Functional Modelling
+
+In **Week-2**, we move from **RTL block-level design** to **SoC-level fundamentals**:
+
+* **BabySoC Architecture Overview** 🖥️
+* **Functional Modelling of SoC Components** ⚡
+* Understanding **RTL-to-SoC integration flow**
+
+👉 Week 2 is where we **connect RTL building blocks to a complete SoC**. 🧩
+
+---
+
+🔗 Return to the main repository: [RISC-V SoC Tapeout Program](https://github.com/Nideshkanna/riscv-soc-tapeout)
+
+---
+## 🙌 Acknowledgements
+
+* [Kunal Ghosh](https://github.com/kunalg123) – VSD SoC Program
+* Open-source contributors of **Yosys**, **GTKWave**, and **Sky130 PDK**
+
+---
+
+📌 **Part of:** [RISC-V SoC Tapeout Program](https://github.com/Nideshkanna/riscv-soc-tapeout)
+📌 **Maintainer:** [Nidesh Kanna R](https://github.com/Nideshkanna)
+
+---
