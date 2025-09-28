@@ -120,7 +120,7 @@ In **Week-2**, we move from **RTL block-level design** to **SoC-level fundamenta
 * **Functional Modelling of SoC Components** ⚡
 * Understanding **RTL-to-SoC integration flow**
 
-👉 Week 2 is where we **connect RTL building blocks to a complete SoC**. 🧩
+👉 ![Week2](https://github.com/Nideshkanna/week2-research-babysoc) is where we **connect RTL building blocks to a complete SoC**. 🧩
 
 ---
 
