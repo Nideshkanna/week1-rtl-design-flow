@@ -56,7 +56,7 @@ This structure translates into a **chain of multiplexers**:
 - If `cond2=0`, another MUX for `cond3`
 - Finally, the **default** path when none are true
 
-📌 **Image Needed Here** → "Mux chain visualization for nested if-else"
+![if](./images/01.png)
 
 ---
 
@@ -75,7 +75,7 @@ else if (cond2)
 
 ```
 
-📌 **Image Needed Here** → "Latch inferred when conditions don’t cover all cases"
+![inferredlatch](./images/02.png)
 
 ### **Hardware Explanation**
 
@@ -101,7 +101,7 @@ end
 
 ```
 
-📌 **Image Needed Here** → "Register with clock, reset, and enable"
+![inferredlatch2](./images/03.png)
 
 Here, the “incomplete if” is **intentional** because the register must hold the previous value when `en=0`.
 
@@ -152,7 +152,7 @@ endmodule
     - `i1` = D input
     - `y` = Q output
 
-📌 **Image Needed Here** → "D latch circuit showing `i0` as enable and `i1` as D input"
+![inif](./images/04.png)
 
 ---
 
@@ -169,7 +169,7 @@ gtkwave tb_incomp_if.vcd
 
 When `i0=0`, output `y` **retains the previous value** instead of going to 0.
 
-📌 **GTKWave Screenshot Needed** → Show `y` holding value when `i0=0`.
+![wave](./images/05.png)
 
 ---
 
@@ -191,6 +191,9 @@ Number of cells: 1
    $_DLATCH_P_   1
 
 ```
+
+![synth](./images/06.png)
+
 
 ⚠️ We expected a **MUX**, but synthesis inferred a **Latch**.
 
@@ -221,7 +224,7 @@ endmodule
 - Else if `i2=1` → `y = i3`
 - Else → **no assignment → inferred latch**
 
-📌 **Image Needed Here** → "Mux + latch structure, with latch enabled when both `i0` and `i2` are low".
+![inif2](./images/07.png)
 
 ---
 
@@ -238,7 +241,7 @@ gtkwave tb_incomp_if2.vcd
 
 When both `i0=0` and `i2=0`, output `y` **remains latched**.
 
-📌 **GTKWave Screenshot Needed** → Show `y` unchanged when both inputs low.
+![wave](./images/08.png)
 
 ---
 
@@ -263,6 +266,8 @@ Number of cells: 3
 
 ```
 
+![synth](./images/09.png)
+
 This matches our expectation:
 
 - MUX for selecting `i1` or `i3`
@@ -285,7 +290,6 @@ This matches our expectation:
 # **Case-statement Pitfalls** (Incomplete / Partial / Overlapping Cases) 🧩
 
 This section walks through *why* bad `case` coding creates inferred latches, partial/overlapping behavior, how it shows up in simulation vs synthesis, and how to fix it.
-All examples come from the lab folder (listed below) — I include the commands you ran, the synthesis results you saw, and exactly where to drop screenshots (GTKWave / Yosys).
 
 ---
 
@@ -333,12 +337,6 @@ iverilog ../my_lib/verilog_model/primitives.v \
 gtkwave <tb.vcd>
 ```
 
-Place screenshots:
-
-* GTKWave screenshots next to each example simulation section.
-* Yosys `show` images (pre/post-ABC) near the synthesis section of each example.
-* Netlist snippets can be included as small code blocks or screenshots.
-
 ---
 
 ## ❗ Background: why `case` can cause latches
@@ -370,6 +368,8 @@ endmodule
 
 ### Behaviour / Explanation
 
+![incase](./images/10.png)
+
 * This is logically a 4→1 MUX (sel[1:0]).
 * But `sel == 2'b10` and `2'b11` have **no assignment** to `y`. To preserve the previous `y` value for those cases, a **latch** is inferred.
 * In other words: when none of the branches drive `y`, hardware must *remember* the last value → latch.
@@ -382,7 +382,9 @@ iverilog incomp_case.v tb_incomp_case.v
 gtkwave tb_incomp_case.vcd
 ```
 
-**Observation (place screenshot):** when `sel` is `10` or `11`, `y` holds the previous value (latched).
+![wave](./images/11.png)
+
+**Observation:** when `sel` is `10` or `11`, `y` holds the previous value (latched).
 
 ### Synthesis (Yosys)
 
@@ -393,6 +395,8 @@ synth -top incomp_case
 abc -liberty ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
 show
 ```
+
+![synth](./images/12.png)
 
 **Synthesis summary (from your run):**
 
@@ -441,6 +445,8 @@ endmodule
 
 ### Behaviour / Explanation
 
+![comcase](./images/12.png)
+
 * All selector values covered (via `default`) → combinational MUX, **no latch**.
 
 ### Simulation
@@ -450,8 +456,9 @@ iverilog comp_case.v tb_comp_case.v
 ./a.out
 gtkwave tb_comp_case.vcd
 ```
+![wave](./images/13.png)
 
-Place GTKWave screenshot: expected switching behavior (no hold/latched values).
+As expected we have switching behavior (no hold/latched values).
 
 ### Synthesis
 
@@ -462,6 +469,8 @@ synth -top comp_case
 abc -liberty ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
 show
 ```
+
+![synth](./images/14.png)
 
 **Synthesis summary (from your run):**
 
@@ -501,6 +510,8 @@ endmodule
 
 ### Behaviour / Explanation
 
+![partcase](./images/15.png)
+
 * **`y`** is assigned in every branch → `y` is combinational.
 * **`x`** is *not* assigned in the `2'b01` branch → synthesizer infers a **latch** for `x` to hold its previous value when `sel == 2'b01`.
 
@@ -512,7 +523,9 @@ iverilog partial_case_assign.v tb_partial_case_assign.v
 gtkwave tb_partial_case_assign.vcd
 ```
 
-Place GTKWave screenshot showing `x` holds value for the problematic `sel` branch.
+![wave](./images/16.png)
+
+`x` holds value for the problematic `sel` branch.
 
 ### Synthesis
 
@@ -523,6 +536,8 @@ synth -top partial_case_assign
 abc -liberty ../my_lib/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
 show
 ```
+
+![synth](./images/17.png)
 
 **Synthesis summary:**
 
@@ -569,10 +584,14 @@ endmodule
 
 ### Behaviour / Explanation
 
+![overcase](./images/18.png)
+
 * The `2'b1?` (wildcard) overlaps with `2'b10` and `2'b11`. Overlapping patterns can lead to **ambiguous matching order** in simulation depending on how Verilog interprets the wildcard and order of matches — this can produce **unpredictable behavior** in RTL simulation.
 * In your run, the RTL simulation showed confusing/latched behavior for `sel == 2'b11`, while Yosys synthesized a clean 4:1 mux (no latch).
 
 ### Synthesis & Netlist
+
+![synth](./images/19.png)
 
 * Yosys mapped the logic to a `mux4` cell (see `bad_case_net.v` snippet you produced). No latch was inferred because, during synthesis, Yosys resolved branches into a deterministic mux implementation.
 
@@ -584,7 +603,9 @@ iverilog ../my_lib/verilog_model/primitives.v ../my_lib/verilog_model/sky130_fd_
 gtkwave tb_bad_case.vcd
 ```
 
-Place GTKWave screenshot showing clean mux selection in GLS.
+![gls](./images/20.png)
+
+Clean mux selection in GLS.
 
 ### Takeaway
 
@@ -615,16 +636,6 @@ Place GTKWave screenshot showing clean mux selection in GLS.
 * Avoid wildcard/overlapping `case` patterns unless you fully understand match precedence.
 * To express designer intent in SystemVerilog, consider `unique`/`priority` qualifiers (if toolchain supports SV).
 * Run **GLS (Gate-Level Simulation)** to catch synthesis-simulation mismatches before signoff.
-
----
-
-## Where to put screenshots / images (placeholders)
-
-* Under each example:
-
-  * `GTKWave` screenshot showing RTL simulation (e.g., latch/have/hold behavior).
-  * `Yosys show` screenshot (pre/post-ABC) or netlist snippet.
-  * `GTKWave` screenshot of GLS (netlist) when available.
 
 ---
 
